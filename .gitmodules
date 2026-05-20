@@ -1,0 +1,3 @@
+[submodule "src/pyon"]
+	path = src/pyon
+	url = https://github.com/miyo-hime/pyon
