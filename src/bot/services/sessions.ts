@@ -22,7 +22,7 @@ export interface QuoteSession {
 
 const sessions = new Map<string, QuoteSession>();
 const timers = new Map<string, ReturnType<typeof setTimeout>>();
-const SESSION_TTL_MS = 1 * 60 * 1000;
+const SESSION_TTL_MS = 5 * 60 * 1000;
 
 let client: Client | null = null;
 
