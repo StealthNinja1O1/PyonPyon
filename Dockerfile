@@ -13,12 +13,13 @@ FROM oven/bun:1-slim
 
 WORKDIR /app
 
-RUN addgroup --system pyonpyon && \
-    adduser --system --ingroup pyonpyon pyonpyon
+RUN groupadd -r pyonpyon && \
+    useradd -r -g pyonpyon -s /bin/false pyonpyon
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/package.json ./
 COPY src/ ./src/
+RUN rm -rf src/pyon/node_modules && ln -s ../../node_modules src/pyon/node_modules
 
 USER pyonpyon
 
