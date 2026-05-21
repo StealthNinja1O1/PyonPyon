@@ -35,7 +35,7 @@ export async function handleContextMenu(
     const reply = await interaction.editReply({
       content: `Quote by **${quoteData.displayName}** · Style: **${result.style}**`,
       files: [{ attachment: result.png, name: "quote.png" }],
-      components: buildQuoteComponents(result.style, availableStyles, "default"),
+      components: buildQuoteComponents(result.style, availableStyles, "default", "default", "default"),
     });
 
     createSession(reply.id, {
@@ -43,6 +43,8 @@ export async function handleContextMenu(
       authorId: quoteData.authorId,
       currentStyle: result.style,
       currentColorId: "default",
+      currentBgId: "default",
+      currentTextId: "default",
       availableStyles,
       channelId: interaction.channelId!,
       quoteData: {

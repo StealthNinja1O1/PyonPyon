@@ -51,12 +51,14 @@ export function extractQuoteData(
 /**
  * Renders a quote card from extracted data.
  * If `style` is omitted or invalid a random layout is chosen.
- * If `accentColor` is omitted Pyon uses its default (#ff5fa2).
+ * Omitted colors fall back to Pyon's defaults.
  */
 export async function buildQuote(
   data: QuoteData,
   style?: LayoutName,
   accentColor?: string,
+  bgColor?: string,
+  textColor?: string,
 ): Promise<RenderResult> {
   const availableStyles = getAvailableStyles();
   const validStyle =
@@ -69,5 +71,7 @@ export async function buildQuote(
     avatarUrl: data.avatarUrl,
     style: validStyle,
     accentColor,
+    bgColor,
+    textColor,
   });
 }

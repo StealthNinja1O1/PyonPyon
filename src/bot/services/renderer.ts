@@ -10,6 +10,8 @@ export type RenderOptions = {
   username: string;
   avatarUrl: string;
   accentColor?: string;
+  bgColor?: string;
+  textColor?: string;
   style?: LayoutName;
 };
 
@@ -43,6 +45,8 @@ export async function renderQuote(options: RenderOptions): Promise<RenderResult>
       username: options.username,
       avatarUrl: options.avatarUrl,
       accentColor: options.accentColor,
+      bgColor: options.bgColor,
+      textColor: options.textColor,
       style: chosenStyle as QuoteRequest["style"],
     };
 

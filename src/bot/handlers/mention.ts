@@ -23,7 +23,7 @@ export async function handleMention(client: Client, message: Message): Promise<v
     const reply = await message.reply({
       content: `Quote by **${quoteData.displayName}** · Style: **${result.style}**`,
       files: [{ attachment: result.png, name: "quote.png" }],
-      components: buildQuoteComponents(result.style, availableStyles, "default"),
+      components: buildQuoteComponents(result.style, availableStyles, "default", "default", "default"),
     });
 
     createSession(reply.id, {
@@ -31,6 +31,8 @@ export async function handleMention(client: Client, message: Message): Promise<v
       authorId: quoteData.authorId,
       currentStyle: result.style,
       currentColorId: "default",
+      currentBgId: "default",
+      currentTextId: "default",
       availableStyles,
       channelId: message.channelId,
       quoteData: {

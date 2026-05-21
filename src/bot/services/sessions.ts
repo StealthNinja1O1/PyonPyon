@@ -12,6 +12,8 @@ export interface QuoteSession {
   authorId: string;
   currentStyle: string;
   currentColorId: string;
+  currentBgId: string;
+  currentTextId: string;
   availableStyles: string[];
   channelId: string;
   quoteData: QuoteData;
@@ -85,4 +87,14 @@ export function updateSessionStyle(messageId: string, style: string): void {
 export function updateSessionColor(messageId: string, colorId: string): void {
   const session = sessions.get(messageId);
   if (session) session.currentColorId = colorId;
+}
+
+export function updateSessionBg(messageId: string, bgId: string): void {
+  const session = sessions.get(messageId);
+  if (session) session.currentBgId = bgId;
+}
+
+export function updateSessionText(messageId: string, textId: string): void {
+  const session = sessions.get(messageId);
+  if (session) session.currentTextId = textId;
 }
