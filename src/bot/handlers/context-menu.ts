@@ -47,12 +47,7 @@ export async function handleContextMenu(
       currentTextId: "default",
       availableStyles,
       channelId: interaction.channelId!,
-      quoteData: {
-        text: quoteData.text,
-        displayName: quoteData.displayName,
-        username: quoteData.username,
-        avatarUrl: quoteData.avatarUrl,
-      },
+      quoteData,
       webhookId: interaction.applicationId,
       webhookToken: interaction.token,
     });

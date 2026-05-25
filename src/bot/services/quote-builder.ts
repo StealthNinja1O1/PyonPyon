@@ -5,6 +5,30 @@ import { getAvailableStyles } from "./layouts.ts";
 
 const MAX_TEXT_LENGTH = 500;
 
+/**
+ * - `<@id>` / `<@!id>` -> `@displayName` or `@globalName` / `@username`
+ * - `<#id>` -> `#channel-name` (if channel is in mentions) otherwise stripped
+ * - `<:name:id>` / `<a:name:id>` -> passed through for Pyon to render
+ */
+function sanitizeText(text: string, message: Message): string {
+  text = text.replace(/<@!?(\d+)>/g, (match, id: string) => {
+    const member = message.mentions.members?.get(id);
+    if (member) return `@${member.displayName}`;
+    const user = message.mentions.users.get(id);
+    if (user) return `@${user.globalName ?? user.username}`;
+    return "@user";
+  });
+
+  text = text.replace(/<#(\d+)>/g, (match, id: string) => {
+    const channel = message.mentions.channels.get(id);
+    if (channel && "name" in channel) return `#${channel.name}`;
+    return "";
+  });
+
+  text = text.replace(/\s+/g, " ").trim();
+  return text;
+}
+
 export interface QuoteData {
   text: string;
   displayName: string;
@@ -22,7 +46,8 @@ export interface QuoteData {
 export function extractQuoteData(
   message: Message,
 ): QuoteData & { authorId: string } {
-  const text = message.content.slice(0, MAX_TEXT_LENGTH);
+  const rawText = sanitizeText(message.content, message);
+  const text = rawText.slice(0, MAX_TEXT_LENGTH);
   if (!text) throw new Error("Cannot quote an empty message");
 
   const displayName =

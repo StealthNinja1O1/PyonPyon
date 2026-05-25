@@ -1,11 +1,5 @@
 import { Client, WebhookClient } from "discord.js";
-
-export interface QuoteData {
-  text: string;
-  displayName: string;
-  username: string;
-  avatarUrl: string;
-}
+import type { QuoteData as QuoteData } from "./quote-builder.ts";
 
 export interface QuoteSession {
   creatorId: string;

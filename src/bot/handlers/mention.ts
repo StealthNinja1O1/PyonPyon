@@ -35,12 +35,7 @@ export async function handleMention(client: Client, message: Message): Promise<v
       currentTextId: "default",
       availableStyles,
       channelId: message.channelId,
-      quoteData: {
-        text: quoteData.text,
-        displayName: quoteData.displayName,
-        username: quoteData.username,
-        avatarUrl: quoteData.avatarUrl,
-      },
+      quoteData,
     });
   } catch (err) {
     console.error("[pyonpyon] Error handling mention:", err);

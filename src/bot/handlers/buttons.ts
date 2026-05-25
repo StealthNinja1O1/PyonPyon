@@ -39,6 +39,9 @@ async function reRender(
 
   const result = await buildQuote(session.quoteData, session.currentStyle as LayoutName, accentColor, bgColor, textColor);
 
+  // Race condition guard: if session was deleted mid-render (e.g. concurrent Remove click), bail out pyon.
+  if (!getSession(interaction.message.id)) return;
+
   await interaction.editReply({
     content: `Quote by **${session.quoteData.displayName}** · Style: **${result.style}**`,
     files: [{ attachment: result.png, name: "quote.png" }],
