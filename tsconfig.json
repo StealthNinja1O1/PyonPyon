@@ -27,5 +27,5 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
   },
-  "include": ["src/index.ts", "src/bot/**/*"]
+  "include": ["src/index.ts", "src/bot/**/*", "src/pyon/**/*"]
 }

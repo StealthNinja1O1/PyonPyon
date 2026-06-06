@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "bun --hot src/index.ts",
     "start": "bun src/index.ts",
+    "build": "bun build --compile --minify --bytecode --compile-exec-argv=\"--smol\" --define __COMPILED__=true ./src/index.ts --outfile pyonpyon",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
