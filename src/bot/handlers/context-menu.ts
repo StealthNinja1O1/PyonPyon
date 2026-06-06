@@ -1,60 +1,59 @@
-import type { MessageContextMenuCommandInteraction } from "discord.js";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+import type { Interaction } from "@discordeno/bot";
 import { extractQuoteData, buildQuote } from "../services/quote-builder.ts";
 import { getAvailableStyles } from "../services/layouts.ts";
 import { buildQuoteComponents } from "../services/action-rows.ts";
 import { createSession } from "../services/sessions.ts";
 
 export async function handleContextMenu(
-  interaction: MessageContextMenuCommandInteraction,
+  interaction: Interaction,
 ): Promise<void> {
-  const targetMessage = interaction.targetMessage;
+  const resolvedMessages = interaction.data?.resolved?.messages;
+  const targetMessage = resolvedMessages
+    ? [...resolvedMessages.values()][0]
+    : undefined;
 
   if (!targetMessage) {
-    await interaction.reply({
-      content: "Couldn't load that message.",
-      flags: 64,
-    });
+    await interaction.respond({ content: "Couldn't load that message.", flags: 64 });
     return;
   }
 
   if (!targetMessage.content) {
-    await interaction.reply({
-      content: "Can't quote an empty message!",
-      flags: 64,
-    });
+    await interaction.respond({ content: "Can't quote an empty message!", flags: 64 });
     return;
   }
 
-  await interaction.deferReply();
+  await interaction.defer();
 
   try {
     const quoteData = extractQuoteData(targetMessage);
     const availableStyles = getAvailableStyles();
     const result = await buildQuote(quoteData);
 
-    const reply = await interaction.editReply({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const reply = (await interaction.edit({
       content: `Quote by **${quoteData.displayName}** · Style: **${result.style}**`,
-      files: [{ attachment: result.png, name: "quote.png" }],
+      files: [{ name: "quote.png", blob: new Blob([new Uint8Array(result.png)]) }],
       components: buildQuoteComponents(result.style, availableStyles, "default", "default", "default"),
-    });
+    })) as any;
 
-    createSession(reply.id, {
-      creatorId: interaction.user.id,
+    createSession(reply.id.toString(), {
+      creatorId: interaction.user!.id.toString(),
       authorId: quoteData.authorId,
       currentStyle: result.style,
       currentColorId: "default",
       currentBgId: "default",
       currentTextId: "default",
       availableStyles,
-      channelId: interaction.channelId!,
+      channelId: interaction.channelId!.toString(),
       quoteData,
-      webhookId: interaction.applicationId,
+      webhookId: interaction.applicationId?.toString(),
       webhookToken: interaction.token,
     });
   } catch (err) {
     console.error("[pyonpyon] Error handling context menu:", err);
     await interaction
-      .editReply("Failed to create quote 😔")
+      .edit({ content: "Failed to create quote 😔" })
       .catch(() => {});
   }
 }

@@ -1,9 +1,4 @@
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  StringSelectMenuBuilder,
-} from "discord.js";
+import { MessageComponentTypes, ButtonStyles } from "@discordeno/bot";
 import { ACCENT_PALETTE, BG_PALETTE, TEXT_PALETTE, type ColorOption } from "./colors.ts";
 
 function capitalize(str: string): string {
@@ -13,79 +8,96 @@ function capitalize(str: string): string {
 export function buildStyleSelect(
   currentStyle: string,
   availableStyles: string[],
-): ActionRowBuilder<StringSelectMenuBuilder> {
-  const select = new StringSelectMenuBuilder()
-    .setCustomId("pyon:style")
-    .setPlaceholder("Style")
-    .addOptions(
-      availableStyles.map((style) => ({
-        label: capitalize(style),
-        value: style,
-        default: style === currentStyle,
-      })),
-    );
-
-  return new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select);
+) {
+  return {
+    type: MessageComponentTypes.ActionRow as const,
+    components: [
+      {
+        type: MessageComponentTypes.SelectMenu as const,
+        customId: "pyon:style",
+        placeholder: "Style",
+        options: availableStyles.map((style) => ({
+          label: capitalize(style),
+          value: style,
+          default: style === currentStyle,
+        })),
+      },
+    ],
+  };
 }
 
 export function buildAccentSelect(
   currentId: string,
-): ActionRowBuilder<StringSelectMenuBuilder> {
-  const select = new StringSelectMenuBuilder()
-    .setCustomId("pyon:accent")
-    .setPlaceholder("Accent Color")
-    .addOptions(
-      ACCENT_PALETTE.map((c: ColorOption) => ({
-        label: c.label,
-        value: c.id,
-        default: c.id === currentId,
-      })),
-    );
-
-  return new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select);
+) {
+  return {
+    type: MessageComponentTypes.ActionRow as const,
+    components: [
+      {
+        type: MessageComponentTypes.SelectMenu as const,
+        customId: "pyon:accent",
+        placeholder: "Accent Color",
+        options: ACCENT_PALETTE.map((c: ColorOption) => ({
+          label: c.label,
+          value: c.id,
+          default: c.id === currentId,
+        })),
+      },
+    ],
+  };
 }
 
 export function buildBgSelect(
   currentId: string,
-): ActionRowBuilder<StringSelectMenuBuilder> {
-  const select = new StringSelectMenuBuilder()
-    .setCustomId("pyon:bg")
-    .setPlaceholder("Background")
-    .addOptions(
-      BG_PALETTE.map((c: ColorOption) => ({
-        label: c.label,
-        value: c.id,
-        default: c.id === currentId,
-      })),
-    );
-
-  return new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select);
+) {
+  return {
+    type: MessageComponentTypes.ActionRow as const,
+    components: [
+      {
+        type: MessageComponentTypes.SelectMenu as const,
+        customId: "pyon:bg",
+        placeholder: "Background",
+        options: BG_PALETTE.map((c: ColorOption) => ({
+          label: c.label,
+          value: c.id,
+          default: c.id === currentId,
+        })),
+      },
+    ],
+  };
 }
 
 export function buildTextSelect(
   currentId: string,
-): ActionRowBuilder<StringSelectMenuBuilder> {
-  const select = new StringSelectMenuBuilder()
-    .setCustomId("pyon:text")
-    .setPlaceholder("Text Color")
-    .addOptions(
-      TEXT_PALETTE.map((c: ColorOption) => ({
-        label: c.label,
-        value: c.id,
-        default: c.id === currentId,
-      })),
-    );
-
-  return new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select);
+) {
+  return {
+    type: MessageComponentTypes.ActionRow as const,
+    components: [
+      {
+        type: MessageComponentTypes.SelectMenu as const,
+        customId: "pyon:text",
+        placeholder: "Text Color",
+        options: TEXT_PALETTE.map((c: ColorOption) => ({
+          label: c.label,
+          value: c.id,
+          default: c.id === currentId,
+        })),
+      },
+    ],
+  };
 }
 
-export function buildRemoveButton(): ActionRowBuilder<ButtonBuilder> {
-  const button = new ButtonBuilder()
-    .setCustomId("pyon:delete")
-    .setLabel("Remove")
-    .setStyle(ButtonStyle.Danger);
-
-  return new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+export function buildRemoveButton() {
+  return {
+    type: MessageComponentTypes.ActionRow as const,
+    components: [
+      {
+        type: MessageComponentTypes.Button as const,
+        style: ButtonStyles.Danger,
+        customId: "pyon:delete",
+        label: "Remove",
+      },
+    ],
+  };
 }
 
 /**
@@ -102,7 +114,8 @@ export function buildQuoteComponents(
   currentAccentId: string,
   currentBgId: string,
   currentTextId: string,
-): ActionRowBuilder<StringSelectMenuBuilder | ButtonBuilder>[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): any[] {
   return [
     buildStyleSelect(currentStyle, availableStyles),
     buildAccentSelect(currentAccentId),

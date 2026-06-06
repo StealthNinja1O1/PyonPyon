@@ -1,9 +1,9 @@
-import { REST, Routes, ApplicationCommandType } from "discord.js";
+import { createRestManager } from "@discordeno/bot";
 
 const commands = [
   {
     name: "Create Quote",
-    type: ApplicationCommandType.Message,
+    type: 3, // ApplicationCommandType.Message
     // Guild install (0) + User install (1)
     integration_types: [0, 1],
     // Guild (0), Bot DM (1), Private Channel (2)
@@ -17,12 +17,10 @@ export async function deployCommands() {
 
   if (!token || !clientId) throw new Error("DISCORD_TOKEN and DISCORD_CLIENT_ID are required");
 
-  const rest = new REST({ version: "10" }).setToken(token);
+  const rest = createRestManager({ token, applicationId: BigInt(clientId) });
   console.log("[pyonpyon] Deploying application commands...");
 
-  await rest.put(Routes.applicationCommands(clientId), {
-    body: commands,
-  });
+  await rest.upsertGlobalApplicationCommands(commands as [typeof commands[number]]);
   console.log("[pyonpyon] Commands deployed successfully!");
 }
 

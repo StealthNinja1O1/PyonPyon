@@ -1,4 +1,3 @@
-import { Client, WebhookClient } from "discord.js";
 import type { QuoteData as QuoteData } from "./quote-builder.ts";
 
 export interface QuoteSession {
@@ -20,10 +19,11 @@ const sessions = new Map<string, QuoteSession>();
 const timers = new Map<string, ReturnType<typeof setTimeout>>();
 const SESSION_TTL_MS = 5 * 60 * 1000;
 
-let client: Client | null = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let bot: any = null;
 
-export function initSessionStore(c: Client) {
-  client = c;
+export function initSessionStore(b: any) {
+  bot = b;
 }
 
 export function createSession(messageId: string, data: QuoteSession): void {
@@ -35,21 +35,23 @@ export function createSession(messageId: string, data: QuoteSession): void {
 
 async function handleExpiry(messageId: string) {
   const session = sessions.get(messageId);
-  if (!session || !client) return;
+  if (!session || !bot) return;
 
   try {
-    const channel = await client.channels.fetch(session.channelId);
-    if (channel?.isTextBased()) {
-      const msg = await channel.messages.fetch(messageId);
-      await msg.edit({ components: [] });
-      console.log(`[pyonpyon] Session expired, components removed: ${messageId}`);
-    }
+    const channelId = BigInt(session.channelId);
+    const msgId = BigInt(messageId);
+    await bot.helpers.editMessage(channelId, msgId, { components: [] });
+    console.log(`[pyonpyon] Session expired, components removed: ${messageId}`);
   } catch {
-    // Channel fetch failed (bot not in server, fall back to the interaction webhook if we stored one.
+    // Channel edit failed (bot not in server). Fall back to webhook if stored.
     if (session.webhookId && session.webhookToken) {
       try {
-        const webhook = new WebhookClient({ id: session.webhookId, token: session.webhookToken });
-        await webhook.editMessage(messageId, { components: [] });
+        await bot.rest.editWebhookMessage(
+          BigInt(session.webhookId),
+          session.webhookToken,
+          messageId,
+          { components: [] },
+        );
       } catch (webhookErr) {
         console.warn(`[pyonpyon] Webhook fallback also failed for ${messageId}:`, webhookErr);
       }
