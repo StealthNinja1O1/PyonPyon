@@ -82,11 +82,17 @@ function iconBigintToHash(icon: bigint): string {
   return hex.startsWith("a") ? `a_${hex.substring(1)}` : hex.substring(1);
 }
 
-function makeAvatarUrl(userId: bigint, avatarHash: bigint | undefined | null, size = 256): string {
+function makeUserAvatarUrl(userId: bigint, avatarHash: bigint | undefined | null, size = 256): string {
   if (!avatarHash) return `https://discord.com/embed/avatars/0.png`;
   const hash = iconBigintToHash(avatarHash);
   const ext = hash.startsWith("a_") ? "gif" : "png";
   return `https://cdn.discordapp.com/avatars/${userId}/${hash}.${ext}?size=${size}`;
+}
+
+function makeMemberAvatarUrl(guildId: bigint, userId: bigint, avatarHash: bigint, size = 256): string {
+  const hash = iconBigintToHash(avatarHash);
+  const ext = hash.startsWith("a_") ? "gif" : "png";
+  return `https://cdn.discordapp.com/guilds/${guildId}/users/${userId}/avatars/${hash}.${ext}?size=${size}`;
 }
 
 /**
@@ -98,13 +104,14 @@ function makeAvatarUrl(userId: bigint, avatarHash: bigint | undefined | null, si
  */
 export function extractQuoteData(
   message: Message,
+  overrideMember?: { nick?: string; avatar?: bigint },
 ): QuoteData & { authorId: string } {
   const rawText = sanitizeText(message.content ?? "", message);
   const text = visualSlice(rawText, MAX_TEXT_LENGTH);
   if (!text) throw new Error("Cannot quote an empty message");
 
   const author = message.author!;
-  const member = message.member;
+  const member = overrideMember ?? message.member;
 
   const displayName =
     (member?.nick) ||
@@ -112,11 +119,12 @@ export function extractQuoteData(
     author.username;
 
   // Server-specific avatar first (member.avatar), then global
-  const avatarUrl = makeAvatarUrl(
-    author.id,
-    member?.avatar ?? author.avatar,
-    256,
-  );
+  let avatarUrl: string;
+  if (message.guildId && member?.avatar) {
+    avatarUrl = makeMemberAvatarUrl(message.guildId, author.id, member.avatar, 256);
+  } else {
+    avatarUrl = makeUserAvatarUrl(author.id, member?.avatar ?? author.avatar, 256);
+  }
 
   return {
     text,

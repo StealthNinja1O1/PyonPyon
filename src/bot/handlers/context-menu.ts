@@ -23,10 +23,16 @@ export async function handleContextMenu(
     return;
   }
 
+  // I hate discordDeno for this but the resolved member data is separate from the message reference
+  const authorId = targetMessage.author?.id;
+  const resolvedMember = authorId
+    ? interaction.data?.resolved?.members?.get(authorId)
+    : undefined;
+
   await interaction.defer();
 
   try {
-    const quoteData = extractQuoteData(targetMessage);
+    const quoteData = extractQuoteData(targetMessage, resolvedMember);
     const availableStyles = getAvailableStyles();
     const result = await buildQuote(quoteData);
 

@@ -40,6 +40,7 @@ export async function startBot() {
         mentionedUserIds: true,
         messageReference: true,
         channelId: true,
+        guildId: true,
         member: true,
         components: true,
         type: true,

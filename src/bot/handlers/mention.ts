@@ -21,7 +21,16 @@ export async function handleMention(message: Message): Promise<void> {
       return;
     }
 
-    const quoteData = extractQuoteData(referencedMessage);
+    const guildId = message.guildId;
+    let resolvedMember: { nick?: string; avatar?: bigint } | undefined;
+    if (guildId && referencedMessage.author?.id) {
+      try {
+        resolvedMember = await bot.helpers.getMember(guildId, referencedMessage.author.id);
+      } catch {
+      }
+    }
+
+    const quoteData = extractQuoteData(referencedMessage, resolvedMember);
     const availableStyles = getAvailableStyles();
     const result = await buildQuote(quoteData);
 
