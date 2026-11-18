@@ -83,7 +83,12 @@ function iconBigintToHash(icon: bigint): string {
 }
 
 function makeUserAvatarUrl(userId: bigint, avatarHash: bigint | undefined | null, size = 256): string {
-  if (!avatarHash) return `https://discord.com/embed/avatars/0.png`;
+  if (!avatarHash) {
+    // new username system: index derived from id. discord.com is not on pyon's
+    // allowlist, so serve the default from cdn.discordapp.com pyon
+    const index = Number((userId >> 22n) % 6n);
+    return `https://cdn.discordapp.com/embed/avatars/${index}.png`;
+  }
   const hash = iconBigintToHash(avatarHash);
   const ext = hash.startsWith("a_") ? "gif" : "png";
   return `https://cdn.discordapp.com/avatars/${userId}/${hash}.${ext}?size=${size}`;
@@ -99,11 +104,16 @@ function makeMemberAvatarUrl(guildId: bigint, userId: bigint, avatarHash: bigint
  * Extracts the data needed to render a quote card from a Discord message.
  *
  * - Display name: server nickname > global name > username
- * - Avatar: server-specific avatar > global avatar
+ * - Avatar: server-specific avatar > global avatar > default embed avatar
  * - Username: not much to say here, its a name
+ *
+ * `guildId` must come from the trigger (gateway message / interaction):
+ * REST-fetched and interaction-resolved messages never carry guild_id or
+ * member, so `message.guildId` is undefined on the quoted message itself.
  */
 export function extractQuoteData(
   message: Message,
+  guildId?: bigint,
   overrideMember?: { nick?: string; avatar?: bigint },
 ): QuoteData & { authorId: string } {
   const rawText = sanitizeText(message.content ?? "", message);
@@ -118,12 +128,13 @@ export function extractQuoteData(
     author.globalName ||
     author.username;
 
-  // Server-specific avatar first (member.avatar), then global
+  // A guild avatar hash is only valid on the guild CDN route — putting it in
+  // the global /avatars/ route 404s. Use each hash only on its own route.
   let avatarUrl: string;
-  if (message.guildId && member?.avatar) {
-    avatarUrl = makeMemberAvatarUrl(message.guildId, author.id, member.avatar, 256);
+  if (guildId && member?.avatar) {
+    avatarUrl = makeMemberAvatarUrl(guildId, author.id, member.avatar, 256);
   } else {
-    avatarUrl = makeUserAvatarUrl(author.id, member?.avatar ?? author.avatar, 256);
+    avatarUrl = makeUserAvatarUrl(author.id, author.avatar, 256);
   }
 
   return {

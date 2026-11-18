@@ -32,7 +32,8 @@ export async function handleContextMenu(
   await interaction.defer();
 
   try {
-    const quoteData = extractQuoteData(targetMessage, resolvedMember);
+    // interaction.guildId, not the resolved message's (gateway-only field)
+    const quoteData = extractQuoteData(targetMessage, interaction.guildId, resolvedMember);
     const availableStyles = getAvailableStyles();
     const result = await buildQuote(quoteData);
 

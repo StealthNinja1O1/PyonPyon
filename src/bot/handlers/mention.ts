@@ -30,7 +30,9 @@ export async function handleMention(message: Message): Promise<void> {
       }
     }
 
-    const quoteData = extractQuoteData(referencedMessage, resolvedMember);
+    // guildId comes from the trigger message: the REST-fetched referenced
+    // message never carries guild_id (gateway-only field)
+    const quoteData = extractQuoteData(referencedMessage, guildId, resolvedMember);
     const availableStyles = getAvailableStyles();
     const result = await buildQuote(quoteData);
 
