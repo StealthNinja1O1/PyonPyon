@@ -9,6 +9,9 @@
         "@fontsource/fraunces": "^5.2.9",
         "@fontsource/inter": "^5.2.8",
         "@fontsource/newsreader": "^5.2.10",
+        "@fontsource/noto-sans-math": "5.2.5",
+        "@fontsource/noto-sans-symbols": "5.3.0",
+        "@fontsource/noto-sans-symbols-2": "5.3.0",
         "@fontsource/noto-serif-jp": "5.3.1",
         "@fontsource/noto-serif-sc": "5.3.1",
         "@fontsource/noto-serif-thai": "5.3.0",
@@ -62,6 +65,12 @@
     "@fontsource/inter": ["@fontsource/inter@5.2.8", "", {}, "sha512-P6r5WnJoKiNVV+zvW2xM13gNdFhAEpQ9dQJHt3naLvfg+LkF2ldgSLiF4T41lf1SQCM9QmkqPTn4TH568IRagg=="],
 
     "@fontsource/newsreader": ["@fontsource/newsreader@5.2.10", "", {}, "sha512-TFaYzoFhDqarUyV2yYjgZZEwT4bpaj6sGBnXSnFknQ/QB8/9LzfY6IO9+inHOX4zzPp87Z7/KuG1OI5gr91Q3A=="],
+
+    "@fontsource/noto-sans-math": ["@fontsource/noto-sans-math@5.2.5", "", {}, "sha512-1bxEvVlF51Vfgpju32mRZzI/CHvsfqjXjI2+sAuEyHYvXABUAIyj+93sCO3QZIoMG5drWyrzgoCqRQRaL6wQ8Q=="],
+
+    "@fontsource/noto-sans-symbols": ["@fontsource/noto-sans-symbols@5.3.0", "", {}, "sha512-Al5jMC2ivI5JkBP3RpcEhkY3zel9CyS199TfKC/B1SAFVj8BJghUNX0tMif0CuhVLpVwZMacM/lHJx3wxdJZBQ=="],
+
+    "@fontsource/noto-sans-symbols-2": ["@fontsource/noto-sans-symbols-2@5.3.0", "", {}, "sha512-hFnEnIXOIgLLJ61SO9icRXKoS+LSWoq7ZqKJQ/NaQR7ptdC6+7yW4ci6EuXgsS1S9JmWpciX6w0AFZkU1DKn1A=="],
 
     "@fontsource/noto-serif-jp": ["@fontsource/noto-serif-jp@5.3.1", "", {}, "sha512-ewMVFXmG1Ip5u1Po1E1M3qqm8hsFqja0/26vkoaNylPXW9pnmEcBREqXxp+Fs03wpmhICE6qyYBN2bbfNtsR9Q=="],
 
